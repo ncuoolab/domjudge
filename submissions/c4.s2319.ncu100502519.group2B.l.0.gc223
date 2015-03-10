@@ -1,0 +1,39 @@
+word ("//"Word)
+ip ("//"IP" "Address)
+email ("//"Email" "Address)
+
+capital [A-Z]
+letter [a-zA-Z]
+num [0-9]
+numt [1-9]
+nums [0-4]
+ipnum ({num}|({numt}{num})|((1){num}{num})|((2){nums}{num})|(2)(5){nums}|(255))
+mix [0-9a-zA-Z]
+string [^ \t\n]+
+mixa [0-9a-zA-Z"."]
+
+
+legalw {capital}{letter}*
+legali {ipnum}("."){ipnum}("."){ipnum}("."){ipnum}$
+legale {string}("@"){string}("."){string}+
+
+%%
+
+{word} {printf("--Word--"); printf("\n");}
+{ip} {printf("--IP Address--"); printf("\n");}
+{email} {printf("--Email Address--"); printf("\n");}
+
+{legalw} {ECHO; printf(" "); printf("is a word") ; printf("\n");}
+{legali} {ECHO; printf(" "); printf("is an IP address") ; printf("\n");}
+{legale} {ECHO; printf(" ");  printf("is an email address") ;printf("\n");}
+
+.|\n ;
+
+%%
+
+int main(int argc,char *argv[])
+{
+ yylex();
+ return (0);
+}
+

@@ -1,0 +1,51 @@
+%{
+int count = 0;
+void tab(int counted) {
+        while( counted-- > 0 ) {
+                printf("\t");
+        }
+}
+%}
+
+left "{"
+right "}"
+
+sentence_test ^[^\t\n]+[^\n]*
+
+sentence (.)+
+space " "
+
+%%
+^[ \t]*    {}
+
+{left}(.)* {
+        tab(count);
+        ECHO;
+        ++count;
+}
+
+{sentence_test}{left}(.)* {
+        tab(count);
+        ECHO;
+        ++count;
+}
+
+{right}({sentence_test})* {
+        --count;
+        tab(count);
+        ECHO;
+}
+
+{sentence_test} {
+        tab(count);
+        ECHO;
+}
+
+.|\n {
+ECHO;
+}
+%%
+
+int main() {
+        yylex();
+}

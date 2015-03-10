@@ -1,0 +1,10 @@
+legal ^[A-Z][a-z]+(" ")+[a-z]+(" ")+noodles(" ")+[A-Z][a-z]+$
+%%
+{legal} {ECHO;printf("\n");}
+.|\n ;
+%%
+int main(int argc,char *argv[])
+{
+yylex();
+return 0;
+}

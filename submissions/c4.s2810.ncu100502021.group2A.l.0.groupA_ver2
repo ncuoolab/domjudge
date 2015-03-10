@@ -1,0 +1,32 @@
+%{
+int counttab=0,tabtemp=0,i=0;
+%}
+first  ")"(" ")*\n
+second "{"(" ")*\n
+r      "}"
+notab [^\t]
+tab    \t
+a      {first}
+b      {second}
+h      ^[^"}"]
+hh     ^.
+hin    ^\t
+l      ^"{"
+%%
+{a}  {counttab++; tabtemp=counttab;ECHO; }
+{b}  {counttab++; tabtemp=counttab;ECHO; }
+{l}  {printf("\t");ECHO;}
+{hin}  {for(i=0;i<tabtemp;i++)printf("\t");tabtemp=counttab;}
+{h}    {for(i=0;i<tabtemp;i++)printf("\t");ECHO;tabtemp=counttab;}
+{r}    {counttab--;for(i=0;i<counttab;i++)printf("\t");ECHO;tabtemp=counttab;}
+{tab}  {counttab--;}
+
+
+.|\n {ECHO;}
+
+%%
+int main(int argc,char *argv[])
+{
+ yylex();
+ return 0;
+}

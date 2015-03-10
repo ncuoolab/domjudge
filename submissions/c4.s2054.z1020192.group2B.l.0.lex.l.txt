@@ -1,0 +1,24 @@
+%{
+%}
+
+%x COMMENT
+valid           [0-9]{1,3}
+word            [A-Z][a-z]*
+IP              {valid}\.{valid}\.{valid}\.{valid}
+
+%%
+
+"//"                    {BEGIN COMMENT;printf("--");}
+<COMMENT>.              {ECHO;}
+<COMMENT>\n             {BEGIN INITIAL;printf("--\n");}
+
+{word}                  {ECHO; printf(" is a word\n");}
+{IP}                    {ECHO; printf(" is an ip address\n");}
+
+.|\n                    {/* do nothing */}
+
+%%
+int main(void) {
+        yylex();
+        return(0);
+}

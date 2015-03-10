@@ -1,0 +1,272 @@
+#include<iostream>
+#include<string>
+using namespace std;
+int doerror=0,numbers=0;
+string result[6]= {};
+
+void doLastName(string LastName)
+{
+    if((LastName[0]-'a')>=0&&(LastName[0]-'a')<=25&&LastName[0]!='b')
+    {
+        int Noletter=0;
+        for(int t=1; t<LastName.length(); t++)
+        {
+            if((LastName[t]-'a')<0||(LastName[t]-'a')>26)
+            {
+                Noletter=1;
+            }
+        }
+        if(Noletter==0)
+        {
+            result[numbers]="LastName "+LastName;
+            numbers++;
+        }
+        else
+        {
+            doerror=1;
+           // cout<<"last"<<endl;
+        }
+    }
+    else
+    {
+        doerror=1;
+        //cout<<"last"<<endl;
+    }
+
+}
+void doFirstName(string FirstName)
+{
+    if((FirstName[0]-'A')>=0&&(FirstName[0]-'A')<=25)
+    {
+
+        int Noletter=0;
+        for(int t=1; t<FirstName.length(); t++)
+        {
+            if((FirstName[t]-'A')<0||(FirstName[t]-'A')>57)
+            {
+                Noletter=1;
+            }
+        }
+        if(Noletter==0)
+        {
+            result[numbers]="FirstName "+FirstName;
+            numbers++;
+        }
+        else
+        {
+            doerror=1;
+          //  cout<<"fir"<<endl;
+        }
+    }
+    else
+    {
+        doerror=1;
+      //  cout<<"first"<<endl;
+    }
+}
+
+void docid(string cid)
+{
+    if((cid[0]-'0')>=0&&(cid[0]-'0')<=9)
+    {
+        int Nonumber=0;
+        for(int t=1; t<cid.length(); t++)
+        {
+            if((cid[t]-'0')<0||(cid[t]-'0')>9)
+            {
+                Nonumber=0;
+            }
+        }
+        if(Nonumber==0)
+        {
+            result[numbers]="cid "+cid;
+            numbers++;
+        }
+        else
+        {
+            doerror=1;
+           // cout<<"cid"<<endl;
+        }
+    }
+    else
+    {
+        doerror=1;
+      //  cout<<"cid"<<endl;
+    }
+}
+
+void doid(string id)
+{
+    string cid="",FirstName="",LastName="";
+    int twostr=0;
+    for(int t=0; t<id.length(); t++)
+    {
+        if(id[t]==' ')
+        {
+            twostr++;
+        }
+    }
+    if(twostr==0)
+    {
+        cid=id;
+        docid(cid);
+    }
+    else
+    {
+        int goswich=0;
+        for(int t=0,s=0; t<id.length(); t++)
+        {
+
+            if(goswich==0)
+            {
+                if(id[t]!=' ')
+                {
+                    FirstName+=id[t];
+                    s++;
+                }
+                else
+                {
+                    s=0;
+                    goswich=1;
+                }
+
+            }
+            else
+            {
+                LastName+=id[t];
+                s++;
+            }
+        }
+        doFirstName(FirstName);
+        doLastName(LastName);
+    }
+
+}
+
+void dobattle(string battle)
+{
+    if(battle[0]=='b'&&battle.length()==1)
+    {
+        result[numbers]="battle "+battle;
+        numbers++;
+    }
+    else
+    {
+        doerror=1;
+       // cout<<"dobat"<<endl;
+    }
+}
+void dolevel(string level)
+{
+    if(level[0]=='l')
+    {
+        int Nonumber=0;
+        for(int t=1; t<level.length(); t++)
+        {
+            if((level[t]-'0')<0||(level[t]-'0')>9)
+            {
+                Nonumber=1;
+            }
+        }
+        if(Nonumber==0)
+        {
+            result[numbers]="Level "+level;
+            numbers++;
+        }
+        else
+        {
+            doerror=1;
+          //  cout<<"lev"<<endl;
+        }
+    }
+    else
+    {
+        doerror=1;
+       // cout<<"lev"<<endl;
+    }
+}
+
+void doStmt(string Stmt)
+{
+    string battle="",id="";
+    int goswich=0;
+
+    for(int t=0,s=0; t<Stmt.length(); t++)
+    {
+
+        if(goswich==0)
+        {
+            if(Stmt[t]!=' ')
+            {
+                battle+=Stmt[t];
+                s++;
+            }
+            else
+            {
+                s=0;
+                goswich=1;
+            }
+
+        }
+        else
+        {
+            id+=Stmt[t];
+            s++;
+        }
+    }
+    dobattle(battle);
+    doid(id);
+}
+void doDcl(string Dcl)
+{
+    string level="",id="";
+    int goswich=0;
+
+    for(int t=0,s=0; t<Dcl.length(); t++)
+    {
+
+        if(goswich==0)
+        {
+            if(Dcl[t]!=' ')
+            {
+                level+=Dcl[t];
+                s++;
+            }
+            else
+            {
+                s=0;
+                goswich=1;
+            }
+
+        }
+        else
+        {
+            id+=Dcl[t];
+            s++;
+        }
+    }
+    dolevel(level);
+    doid(id);
+}
+
+int main()
+{
+    string Dcl,Stmt;
+    getline(cin,Dcl);
+    getline(cin,Stmt);
+    doDcl(Dcl);
+    doStmt(Stmt);
+
+    if(doerror==1){
+        cout<<"invalid input"<<endl;
+    }
+    else{
+        for(int t=0;t<numbers;t++){
+            cout<<result[t]<<endl;
+        }
+    }
+
+
+
+    return 0;
+}

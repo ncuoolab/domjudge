@@ -1,0 +1,30 @@
+noodles noodles
+name [a-zA-Z0-9]+
+
+career [a-zA-Z0-9]+
+
+hometown [a-zA-Z0-9]+
+
+
+line {name}(\t){career}(\t){noodles}(\t){hometown}
+
+
+%%
+
+
+{line} {ECHO ; printf("\n");}
+
+.|\n ;
+
+
+%%
+
+int main(int argc,char *argv[])
+
+{
+
+ yylex();
+
+ return (0);
+
+}

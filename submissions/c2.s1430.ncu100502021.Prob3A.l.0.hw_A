@@ -1,0 +1,18 @@
+start [a-zA-Z_$]
+sequence [A-Za-z0-9_$]*
+cpy cpy
+valid1 {cpy}({sequence})*
+valid2 {start}{sequence}*{cpy}{sequence}*
+legal1 (" "|"("|\n|\t)({valid1}|{valid2})
+legal2 ^({valid1}|{valid2})
+%%
+
+{legal1} {printf("%s",1+yytext);printf("\n");}
+{legal2} {printf("%s",yytext);printf("\n");}
+.|\n ;
+%%
+int main(int argc,char *argv[])
+{
+ yylex();
+ return (0);
+}

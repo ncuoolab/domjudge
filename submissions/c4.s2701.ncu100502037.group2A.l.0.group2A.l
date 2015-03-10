@@ -1,0 +1,28 @@
+
+%{
+  int tab =0 , l_bracket =0, i=0;
+%}
+
+%x OTHER
+
+%%
+
+^(\t)+   { }
+"{"     {ECHO; l_bracket++;  }
+"}"     { l_bracket--; ECHO;}
+"\n"    {ECHO; BEGIN OTHER;}
+<OTHER>"{" { for(i=0; i< l_bracket; i++)printf("\t"); l_bracket++;  ECHO; BEGIN INITIAL;  }
+<OTHER>"}" { l_bracket--; for(i=0; i< l_bracket; i++)printf("\t"); ;  ECHO; BEGIN INITIAL;  }
+<OTHER>[\t| ] {  }
+<OTHER>.  { for( i=0; i< l_bracket; i++)printf("\t");    ECHO; BEGIN INITIAL;}
+<OTHER>\n { for(i=0; i< l_bracket; i++)printf("\t");   ECHO;   }
+
+.|\n|\t    {    ECHO; }
+
+%%
+
+int main(int argc, char *argv[]) {
+        yylex();
+        return(0);
+
+}

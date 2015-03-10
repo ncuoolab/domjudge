@@ -1,0 +1,17 @@
+digit           [0-9]
+letter          [a-zA-Z]
+space           [ ]
+col          	({digit}|{letter})+
+col2         	({digit}|{letter})*
+noodles         ^{col}{space}+{col}{space}+{col2}noodles{col2}{space}+{col}
+
+%%
+{noodles}       {ECHO;printf("\n");}
+\n
+.
+%%
+int main()
+{
+        yylex();
+        return(0);
+}

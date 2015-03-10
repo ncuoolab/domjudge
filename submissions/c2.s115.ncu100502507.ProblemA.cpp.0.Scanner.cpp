@@ -1,0 +1,190 @@
+#include <iostream>
+#include <string.h>
+#include <vector>
+#include <cstdlib>
+using namespace std;
+
+enum type {ERR, ID, ASSIGN, INUM, BLANK, END};
+
+void proc(string&);
+void stmt(string&);
+void val(string &);
+int peek(string&);
+char advance(string&);
+void match(string&, int);
+void err();
+void display();
+
+struct token {
+	int type;
+	string val;
+};
+
+vector<token> list;
+
+int main() {
+	string stream = "";
+
+	cout << "$ ";
+	getline(cin, stream);
+
+	proc(stream);
+
+	display();
+	system("pause");
+	return 0;
+}
+
+void proc(string &stream) {
+	while (peek(stream) == BLANK) {
+		advance(stream);
+	}
+
+	switch (peek(stream)) {
+	case ID:
+		stmt(stream);
+		break;
+	case ERR:
+	default:
+		err();
+		break;
+	}
+}
+
+void stmt(string &stream) {
+	while (peek(stream) == BLANK) {
+		advance(stream);
+	}
+
+	if (peek(stream) == ID) {
+		match(stream, ID);
+		match(stream, ASSIGN);
+		val(stream);
+	}
+	else {
+		err();
+	}
+}
+
+void val(string &stream) {
+	while (peek(stream) == BLANK) {
+		advance(stream);
+	}
+
+	switch (peek(stream)) {
+	case ID:
+		match(stream, ID);
+		break;
+	case INUM:
+		match(stream, INUM);
+		break;
+	default:
+		err();
+		break;
+	}
+}
+
+int peek(string &stream) {
+	if (stream.empty()) {
+		return END;
+	}
+	else {
+		char ch = stream.front();
+
+		if (ch == '=') {
+			return ASSIGN;
+		}
+		else if (isdigit(ch)) {
+			return INUM;
+		}
+		else if (isalpha(ch)){
+			return ID;
+		}
+		else if (ch == ' ') {
+			return BLANK;
+		}
+		else {
+			return ERR;
+		}
+	}
+}
+
+char advance(string &stream) {
+	char ch = stream.front();
+	stream = stream.substr(1, stream.length() - 1);
+	return ch;
+}
+
+void match(string &stream, int type) {
+	while (peek(stream) == BLANK) {
+		advance(stream);
+	}
+
+	token ts;
+	ts.type = type;
+	ts.val = "";
+	
+	switch (type) {
+	case ID:
+		if (isalpha(stream.front())) {
+			ts.val = advance(stream);
+		}
+		else {
+			err();
+		}
+		break;
+	case ASSIGN:
+		if (stream.front() == '=') {
+			ts.val = advance(stream);
+		}
+		else {
+			err();
+		}
+		break;
+	case INUM:
+		char ch;
+		while (!stream.empty() && isdigit(ch = advance(stream))) {
+			ts.val.push_back(ch);
+		}
+		break;
+	default:
+		err();
+		break;
+	}
+	
+	list.push_back(ts);
+}
+
+void err() {
+	cerr << "Valid input\n";
+	system("pause");
+	exit(1);
+}
+
+void display() {	
+	token currentToken = list.front();
+
+	while (!list.empty()) {
+		switch (currentToken.type) {
+		case ID:
+			cout << "id ";
+			break;
+		case ASSIGN:
+			cout << "assign ";
+			break;
+		case INUM:
+			cout << "inum ";
+			break;
+		default:
+			err();
+			break;
+		}
+
+		cout << currentToken.val << endl;
+		list.erase(list.begin());
+
+		if (!list.empty()) {
+			currentToken = list.front();
+		}
+	}
+}

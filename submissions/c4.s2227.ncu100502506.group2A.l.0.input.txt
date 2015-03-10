@@ -1,0 +1,23 @@
+
+import java.io.*;
+
+/** this code is written by programmer of second type **/
+
+public class HelloJava
+{
+public HelloJava(){ System.out.println("Hello Java"); }
+
+public static void main(string[] args)
+{
+HelloJava hello = new HelloJava();
+}
+
+static
+{
+//something while class loading
+}
+}
+
+
+
+

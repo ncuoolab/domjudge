@@ -1,0 +1,15 @@
+%{
+
+%}
+type   [A-Za-z_$]*
+letter [A-Za-z_$0-9]
+identified  {type}"cpy"{letter}*
+%%
+{identified} {ECHO;printf("\n");}
+.|\n  {}
+
+%%
+int main(int argc,char *argv[]){
+        yylex();
+        return(0);
+}

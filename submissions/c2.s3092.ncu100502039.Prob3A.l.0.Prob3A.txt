@@ -1,0 +1,14 @@
+alpha       [_a-zA-Z\$\_]
+digit       [0-9]
+var         cpy
+identifier  {alpha}({alpha}|digit)*{var}({alpha}|{digit})*
+identifier2 {var}({alpha}|digit)*
+%%
+{identifier} ECHO; printf("\n");
+{identifier2} ECHO; printf("\n");
+.|\n ;
+%%
+int main(){
+        yylex();
+        return 0;
+}
