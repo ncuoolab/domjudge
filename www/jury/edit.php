@@ -13,26 +13,54 @@ require('init.php');
 requireAdmin();
 
 $cmd = @$_POST['cmd'];
-if ( $cmd != 'add' && $cmd != 'edit' ) error ("Unknown action.");
+if ( $cmd != 'add' && $cmd != 'edit' && $cmd != 'batch_adding') error ("Unknown action.");
 
 require(LIBDIR .  '/relations.php');
 
 $t = @$_POST['table'];
-if(!$t)	error ("No table selected.");
+if(!$t) error ("No table selected.");
 if(!in_array($t, array_keys($KEYS))) error ("Unknown table.");
 
-$data          =  $_POST['data'];
 $keydata       = @$_POST['keydata'];
 $skipwhenempty = @$_POST['skipwhenempty'];
 $referrer      = @$_POST['referrer'];
 
-if ( empty($data) ) error ("No data.");
+
 // ensure referrer only contains a single filename, not complete URLs
 if ( ! preg_match('/^[._a-zA-Z0-9?&=]*$/', $referrer ) ) error ("Invalid characters in referrer.");
 
 require(LIBWWWDIR . '/checkers.jury.php');
 
-if ( !isset($_POST['cancel']) ) {
+if ( isset($_POST['cancel']) ) {
+	// do nothing
+} elseif ( $cmd == 'batch_adding' ) {
+	$login_begin = $_POST['login_begin'];
+	$login_end   = $_POST['login_end'];
+
+	for ( $i = $login_begin; $i <= $login_end; $i++ ) {
+		$team       = $i;
+		$categories = array(
+			'system'        => 1,
+			'participants'  => 2,
+			'observers'     => 3,
+			'organisation'  => 4,
+		);
+
+		$itemdata = array(
+			'login'      => $team,
+			'name'       => $team,
+			'categoryid' => $categories['system'],
+			'authtoken'  => md5($team . '#' . $team),
+		);
+
+		$newid = $DB->q("RETURNID INSERT INTO $t SET %S", $itemdata);
+		auditlog($t, $newid, 'added');
+		auditlog('team', $team, 'set password');
+	}
+} else {
+	$data          =  $_POST['data'];
+	if ( empty($data) ) error ("No data.");
+
 	foreach ($data as $i => $itemdata ) {
 		if ( !empty($skipwhenempty) && empty($itemdata[$skipwhenempty]) ) {
 			continue;
