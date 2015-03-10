@@ -25,3 +25,16 @@ function addTeams()
     addSubmit('Cancel', 'cancel') .
     addEndForm();
 }
+
+function addTeamsFromCSV()
+{
+    return
+    addForm('edit.php', $method = 'post', $id = '', $enctype = 'multipart/form-data') .
+    addInputFile('csvFile') .
+    addHidden('table','team') .
+    addHidden('referrer') .
+    addHidden('cmd', 'adding_from_csv') .
+    addSubmit('Create') .
+    addSubmit('Cancel', 'cancel') .
+    addEndForm();
+}

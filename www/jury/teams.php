@@ -102,6 +102,7 @@ if( $teams->count() == 0 ) {
 if ( IS_ADMIN ) {
 	echo "<p>" .addLink('team') . "</p>\n";
 	echo "<p>批次新增：" . addTeams() . "</p>\n";
+	echo "<p>從CSV匯入：" . addTeamsFromCSV() . "</p>\n";
 }
 
 echo "</div>\n";

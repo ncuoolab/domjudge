@@ -13,7 +13,7 @@ require('init.php');
 requireAdmin();
 
 $cmd = @$_POST['cmd'];
-if ( $cmd != 'add' && $cmd != 'edit' && $cmd != 'batch_adding') error ("Unknown action.");
+if ( $cmd != 'add' && $cmd != 'edit' && $cmd != 'batch_adding'&& $cmd != 'adding_from_csv') error ("Unknown action.");
 
 require(LIBDIR .  '/relations.php');
 
@@ -39,24 +39,17 @@ if ( isset($_POST['cancel']) ) {
 
 	for ( $i = $login_begin; $i <= $login_end; $i++ ) {
 		$team       = $i;
-		$categories = array(
-			'system'        => 1,
-			'participants'  => 2,
-			'observers'     => 3,
-			'organisation'  => 4,
-		);
-
-		$itemdata = array(
-			'login'      => $team,
-			'name'       => $team,
-			'categoryid' => $categories['system'],
-			'authtoken'  => md5($team . '#' . $team),
-		);
-
-		$newid = $DB->q("RETURNID INSERT INTO $t SET %S", $itemdata);
-		auditlog($t, $newid, 'added');
-		auditlog('team', $team, 'set password');
+    add_user($team, $team, 'system', $team . '#' . $team, $DB, $t);
+  }
+} elseif ( $cmd == 'adding_from_csv' ) {
+  $csv = fopen($_FILES['csvFile']['tmp_name'], 'r+');
+  #$csv = file_get_contents($_FILES['csvFile']["tmp_name"]);
+	while (($row = fgetcsv($csv)) !== false){
+    $team       = $row[1];
+    $phone      = $row[3];
+    add_user($team, $team, 'system', $team . '+' . $phone, $DB, $t);
 	}
+
 } else {
 	$data          =  $_POST['data'];
 	if ( empty($data) ) error ("No data.");
@@ -132,4 +125,24 @@ function check_sane_keys($itemdata) {
 			error ("Invalid characters in field name \"$key\".");
 		}
 	}
+}
+
+function add_user($login, $name, $category, $passwd, $DB, $t) {
+  $categories = array(
+      'system'        => 1,
+      'participants'  => 2,
+      'observers'     => 3,
+      'organisation'  => 4,
+  );
+  
+  $itemdata = array(
+      'login'      => $login,
+      'name'       => $name,
+      'categoryid' => $categories[$category],
+      'authtoken'  => md5($login.'#'.$passwd),
+  );
+  
+  $newid = $DB->q("RETURNID INSERT INTO $t SET %S", $itemdata);
+  auditlog($t, $newid, 'added');
+  auditlog('team', $team, 'set password');
 }

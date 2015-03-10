@@ -72,6 +72,13 @@ function addInput($name, $value = '', $size = 0, $maxlength = 0) {
 }
 
 /**
+ *
+ */
+function addInputFile($name){
+	return addInputField('file', $name);
+}
+
+/**
  * Helper function for addSelect
  */
 function matchSelect($val, $default)
